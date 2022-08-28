@@ -2,4 +2,4 @@
 An IFC viewer with an FPS (first-person shooter) experience.
 
 
-clone the repository and install the dependencies using `npm install` and build and bundle the project with `npm run build`. 
+Clone the repository and install the dependencies using `npm install` and build and bundle the project with `npm run build`. 
