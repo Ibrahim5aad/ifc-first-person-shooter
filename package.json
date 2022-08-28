@@ -1,0 +1,24 @@
+{
+  "name": "ifc-first-person-shooter",
+  "version": "1.0.0",
+  "description": "-",
+  "main": "app.js",
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "watch": "rollup -w -c ./rollup.config.js"
+
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^20.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.2",
+    "rollup": "^2.45.2"
+  },
+  "dependencies": {
+    "three": "^0.135.0",
+    "web-ifc": "0.0.35",
+    "web-ifc-three": "0.0.117",
+    "web-ifc-viewer": "^1.0.192"
+  }
+}
