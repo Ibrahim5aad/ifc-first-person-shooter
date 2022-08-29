@@ -6,14 +6,15 @@
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
     "watch": "rollup -w -c ./rollup.config.js"
-
   },
   "author": "",
   "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-node-resolve": "^13.0.2",
-    "rollup": "^2.45.2"
+    "@rollup/plugin-url": "^7.0.0",
+    "rollup": "^2.45.2",
+    "rollup-plugin-import-file": "^1.0.1"
   },
   "dependencies": {
     "three": "^0.135.0",

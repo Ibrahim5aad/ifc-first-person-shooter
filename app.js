@@ -6,16 +6,20 @@ import {
   PerspectiveCamera,
   Scene,
   WebGLRenderer,
-  Quaternion,
-  Vector3
+  AudioListener,
+  AudioLoader
 } from "three";
  
+import {  GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { IFCLoader } from "web-ifc-three/IFCLoader";
 import InputHandler from './input-handler'
 import PlayerControls from './entities/player/player-controls'
 import EntityManager from './entities/entity-manager'
 import Entity from './entities/entity'
 
+import Weapon from './entities/player/weapon';
+import weapon from './assets/animations/ak47/ak47.glb'
+import weaponShot from './assets/sounds/weapon_shot.wav'
 
 class App{
  
@@ -28,21 +32,24 @@ class App{
   }
 
   Init(){
-    
-    this.SetupGraphics();
-    this.SetupIFCLoader();
-    this.animFrameId = window.requestAnimationFrame(this.Animate); 
-    InputHandler.ClearEventListners();
-    this.SetupEntities();
+    this.LoadAssets();
+    setTimeout(() => {
+      this.SetupGraphics();
+      this.SetupIFCLoader();
+      this.animFrameId = window.requestAnimationFrame(this.Animate); 
+      InputHandler.ClearEventListners();
+      this.SetupEntities();
+    }, 2000);
   }
 
   SetupEntities(){
     this.entityManager = new EntityManager();
 
     const playerEntity = new Entity("Player");
-    playerEntity.AddComponent(new PlayerControls(this.camera)); 
-    this.entityManager.Add(playerEntity); 
+    playerEntity.AddComponent(new PlayerControls(this.camera));
+    playerEntity.AddComponent(new Weapon(this.camera, this.assets['weapon'].animations, this.assets['weapon'].scene, this.listener, this.assets['weaponShot']));
 
+    this.entityManager.Add(playerEntity); 
     this.entityManager.Initialize();
   }
 
@@ -68,8 +75,10 @@ class App{
     this.camera.near = 0.01; 
     this.camera.position.z = 2.5;
     this.camera.position.y = 1.7;
-    this.camera.position.x = 0;
-    this.camera.lookAt(new Vector3(0,0,0));
+    this.camera.position.x = 0; 
+
+    this.listener = new AudioListener();
+    this.camera.add( this.listener );
 
     this.scene.add(this.camera);
 
@@ -103,7 +112,6 @@ class App{
       input.addEventListener(
         "change",
         (changed) => {
-          console.log("file added");
           const ifcURL = URL.createObjectURL(changed.target.files[0]);
           this.ifcLoader.load(ifcURL, (ifcModel) => this.scene.add(ifcModel));
         },
@@ -139,7 +147,23 @@ class App{
       this.camera.aspect = innerWidth / innerHeight;
       this.camera.updateProjectionMatrix();
   }
-      
+   
+  async LoadAssets(){
+
+    const gltfLoader = new GLTFLoader();
+    const audioLoader = new AudioLoader();
+
+    await this.AddAsset(weapon, gltfLoader, "weapon");
+    await this.AddAsset(weaponShot, audioLoader, "weaponShot");
+  }
+
+  async AddAsset(asset, loader, name){
+     await loader.loadAsync(asset).then( r =>{
+      this.assets[name] = r;
+      console.log(this.assets[name]);
+    });
+    
+  }
 }
 
 
