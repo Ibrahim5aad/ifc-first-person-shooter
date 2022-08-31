@@ -1,5 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import url from '@rollup/plugin-url';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 export default {
   input: 'app.js',
@@ -12,8 +13,10 @@ export default {
   plugins: [
     resolve(),
     url({
-      include: ['**/*.glb', '**/*.wav'],
+      include: ['**/*.glb', '**/*.wav', '**/*.mp3'],
+      
       // destDir: './assets'
-    })
+    }),
+    nodePolyfills( /* options */ )
   ]
 };

@@ -5,7 +5,8 @@ import {
   } from "three";
   
 import Component from '../component'
-import InputHandler from '../../input-handler'
+import InputHandler from '../../helpers/input-handler'
+import {MyAmmo as Ammo} from '../../helpers/ammo-helper'
 
 
 export default class PlayerControls  extends Component{
@@ -17,20 +18,20 @@ export default class PlayerControls  extends Component{
 
         this.timeZeroToMax = 0.08;
 
-        this.maxSpeed = 0.06;
+        this.maxSpeed = 5.0;
         this.speed = new Vector3();
         this.acceleration = this.maxSpeed / this.timeZeroToMax;
-        this.decceleration = -0.7;
+        this.decceleration = -3.0;
 
         this.mouseSpeed = 0.002; 
         
-        this.isLocked = false;
+        this.isLocked = false; 
 
         this.angles = new Euler();
         this.pitch = new Quaternion();
         this.yaw = new Quaternion();
 
-        this.jumpVelocity = 5;
+        this.jumpVelocity = 10;
         this.yOffset = 0.5;
         this.tempVec = new Vector3();
         this.moveDir = new Vector3();
@@ -39,9 +40,18 @@ export default class PlayerControls  extends Component{
     }
 
     Initialize(){
+        this.physicsComponent = this.GetComponent("PlayerPhysics");
+        this.physicsBody = this.physicsComponent.body;
+        this.transform = new Ammo.btTransform();
+        this.zeroVec = new Ammo.btVector3(0.0, 0.0, 0.0);
+
         this.angles.setFromQuaternion(this.parent.Rotation);
         this.UpdateRotation(); 
-        InputHandler.AddMouseMoveListner(this.OnMouseMove); 
+
+        InputHandler.AddMouseMoveListner(this.OnMouseMove);
+        InputHandler.AddKeyDownListner(this.OnKeyDown);
+        InputHandler.AddKeyUpListner(this.OnKeyUp);
+
         document.addEventListener('pointerlockchange', this.OnPointerlockChange) 
         InputHandler.AddClickListner( () => {
             if(!this.isLocked){
@@ -57,6 +67,31 @@ export default class PlayerControls  extends Component{
         }
 
         this.isLocked = false;
+    }
+
+    OnKeyDown = (e) => {
+
+        if(InputHandler.GetKeyDown("KeyS") || 
+        InputHandler.GetKeyDown("KeyW") ||
+        InputHandler.GetKeyDown("KeyD") || 
+        InputHandler.GetKeyDown("KeyA"))
+        {
+            this.Broadcast({topic: 'walk_sound'});
+        }
+
+    }
+
+
+    OnKeyUp = (e) => {
+        if(!(InputHandler.GetKeyDown("KeyS") || 
+        InputHandler.GetKeyDown("KeyW") ||
+        InputHandler.GetKeyDown("KeyD") || 
+        InputHandler.GetKeyDown("KeyA")))
+        {
+            this.Broadcast({topic: 'stop_walk_sound'});
+        }
+
+
     }
 
     OnMouseMove = (event) => {
@@ -103,6 +138,15 @@ export default class PlayerControls  extends Component{
                                         0.0, 
                                         forwardFactor).normalize();
        
+
+        const velocity = this.physicsBody.getLinearVelocity();
+        if(InputHandler.GetKeyDown('Space') && this.physicsComponent.canJump){
+            velocity.setY(this.jumpVelocity);
+            this.physicsComponent.canJump = false;
+            this.Broadcast({topic: 'player_jump_sound'});
+        }
+
+
         // Simulate movement acceleration and decceleration
         this.Deccelerate(t);
         this.Accelarate(t);
@@ -110,13 +154,28 @@ export default class PlayerControls  extends Component{
         // Add the accelrated/deccelerated speed to the movement vector
         const moveVector = this.tempVec.copy(this.speed);
 
-        // Apply the yaw rotation to the movement direction vector
+        // // Apply the yaw rotation to the movement direction vector
         moveVector.applyQuaternion(this.yaw); 
-        
-        // Set new camera postion and propagate the new postiton to componenet parent
-        var tmp = this.camera.position.add(moveVector); 
-        this.camera.position.set(tmp.x, tmp.y, tmp.z);
-        this.parent.SetPosition(this.camera.position);
+
+        velocity.setX(moveVector.x);
+        velocity.setZ(moveVector.z);
+
+        this.physicsBody.setLinearVelocity(velocity);
+        this.physicsBody.setAngularVelocity(this.zeroVec);
+
+        const ms = this.physicsBody.getMotionState();
+
+        if(ms){
+            ms.getWorldTransform(this.transform);
+            const p = this.transform.getOrigin();
+            this.camera.position.set(p.x(), p.y() + this.yOffset, p.z());
+            this.parent.SetPosition(this.camera.position);
+        }
+ 
+        // // Set new camera postion and propagate the new postiton to componenet parent
+        // var tmp = this.camera.position.add(moveVector); 
+        // this.camera.position.set(tmp.x, tmp.y, tmp.z);
+        // this.parent.SetPosition(this.camera.position);
 
     }
 }

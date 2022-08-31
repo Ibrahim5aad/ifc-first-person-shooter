@@ -14,9 +14,11 @@
     "@rollup/plugin-node-resolve": "^13.0.2",
     "@rollup/plugin-url": "^7.0.0",
     "rollup": "^2.45.2",
-    "rollup-plugin-import-file": "^1.0.1"
+    "rollup-plugin-import-file": "^1.0.1",
+    "rollup-plugin-polyfill-node": "^0.10.2"
   },
   "dependencies": {
+    "ammo.js": "github:kripken/ammo.js",
     "three": "^0.135.0",
     "web-ifc": "0.0.35",
     "web-ifc-three": "0.0.117",

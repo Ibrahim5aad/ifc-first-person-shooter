@@ -1,4 +1,4 @@
-import {FiniteStateMachine, State} from '../../finite-state-machine'
+import {FiniteStateMachine, State} from '../../helpers/finite-state-machine'
 import * as THREE from 'three'
 
 export default class WeaponFSM extends FiniteStateMachine{
@@ -101,7 +101,7 @@ class ReloadState extends State{
             action.setEffectiveTimeScale(1.0);
             action.crossFadeFrom(prevState.Animation.action, 0.1, true);
         }
-
+        action.timeScale = 0.9; 
         action.play();
     }
 }

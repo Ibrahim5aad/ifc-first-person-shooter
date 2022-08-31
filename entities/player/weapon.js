@@ -1,23 +1,20 @@
 import {
-    Audio,
     AnimationMixer,
     Euler,
     MathUtils
   } from "three";
   
 import Component from '../component'
-import InputHandler from '../../input-handler'
+import InputHandler from '../../helpers/input-handler'
 import WeaponFSM from './weapon-fsm';
 
 
 export default class Weapon extends Component{
-    constructor(camera, animations, model, audioListener, shotSoundBuffer){
+    constructor(camera, animations, model){
         super();
         this.name = 'Weapon';
         this.camera = camera;
-        this.model = model;
-        this.audioListener = audioListener;
-        this.shotSoundBuffer = shotSoundBuffer;
+        this.model = model; 
         this.modelAnimations = animations;
         this.animations = {};
         this.shoot = false;
@@ -43,7 +40,6 @@ export default class Weapon extends Component{
         this.camera.add(scene);
 
         this.SetAnimations();
-        this.SetSoundEffect();
   
         this.stateMachine = new WeaponFSM(this);
         this.stateMachine.SetState('idle');
@@ -105,7 +101,10 @@ export default class Weapon extends Component{
         console.log("Reloading");
         this.reloading = true;
         this.stateMachine.SetState('reload');
+        this.Broadcast({topic: 'weapon_reload_sound'});
+        console.log('weapon_reload_sound');
     }
+    
 
 
     ReloadDone(){
@@ -115,28 +114,21 @@ export default class Weapon extends Component{
 
     Shoot(t){
         if(!this.shoot){
+            
+            this.Broadcast({topic: 'weapon_shot_sound_off'});
             return;
         }
  
         if(this.shootTimer <= 0.0 ){
              
             this.Broadcast({topic: 'weapon_shot'});
-            
-            if(!this.shotSound.isPlaying){
-                this.shotSound.play();
-            }
         }
 
+        this.Broadcast({topic: 'weapon_shot_sound'});
         this.shootTimer = Math.max(0.0, this.shootTimer - t);
     }
 
-    SetSoundEffect(){
-        this.shotSound = new Audio(this.audioListener);
-        this.shotSound.setBuffer(this.shotSoundBuffer);
-        this.shotSound.setLoop(false);
-    }
-
-
+    
     Update(t){
         this.mixer.update(t);
         this.stateMachine.Update(t);
