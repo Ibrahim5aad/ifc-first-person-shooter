@@ -4,4 +4,4 @@ An IFC viewer with an FPS (first-person shooter) experience based on IFC.js and 
 Clone the repository and install the dependencies using `npm install` and build and bundle the project with `npm run build`. 
 
  
-![](https://github.com/Ibrahim5aad/ifc-first-person-shooter/main/demo/demo.webm)
+![](https://github.com/Ibrahim5aad/ifc-first-person-shooter/blob/main/demo/demo.webm)
