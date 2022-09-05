@@ -72,7 +72,7 @@ class App{
     playerEntity.AddComponent(new PlayerControls(this.camera));
     playerEntity.AddComponent(new Weapon(this.camera, this.assets['weapon'].animations, this.assets['weapon'].scene));
     playerEntity.AddComponent(new PlayerSound(this.listener, this.assets));
-    playerEntity.SetPosition(new Vector3(-15.14, 2.48, -1.36));
+    playerEntity.SetPosition(new Vector3(-35.14, 2.48, -1.36));
   
     const ifcModelEntity = new Entity("IFCModel");
     ifcModelEntity.AddComponent(new IFCModel(this.ifcModel, this.scene, this.physicsWorld));
@@ -107,10 +107,7 @@ class App{
       
     this.camera = new PerspectiveCamera(75, size.width / size.height);
     this.camera.near = 0.01; 
-    this.camera.position.z = 2.5;
-    this.camera.position.y = 1.7;
-    this.camera.position.x = 0; 
-
+  
     this.listener = new AudioListener();
     this.camera.add( this.listener );
 
@@ -142,7 +139,7 @@ class App{
       this.ifcLoader = new IFCLoader();
       this.ifcLoader.ifcManager.setWasmPath("static/");
       
-      this.ifcLoader.load("/assets/ifc-models/RME_basic_sample_project.ifc", (ifcModel) =>
+      this.ifcLoader.load("/assets/ifc-models/basic_project.ifc", (ifcModel) =>
           {
             this.ifcModel = ifcModel;
           });
@@ -171,7 +168,7 @@ class App{
          solver = new Ammo.btSequentialImpulseConstraintSolver();
 
     this.physicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, overlappingPairCache, solver, collisionConfiguration );
-    this.physicsWorld.setGravity( new Ammo.btVector3( 0.0, -4.81, 0.0 ) );
+    this.physicsWorld.setGravity( new Ammo.btVector3( 0.0, -9.81, 0.0 ) );
 
     const fp = Ammo.addFunction(this.PhysicsUpdate);
     this.physicsWorld.setInternalTickCallback(fp);

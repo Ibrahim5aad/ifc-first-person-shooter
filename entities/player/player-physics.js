@@ -17,7 +17,7 @@ export default class PlayerPhysics extends Component{
     }
 
     Initialize(){
-        const height = 1.3,
+        const height = 1,
               radius = 0.3,
               mass = 5;
 

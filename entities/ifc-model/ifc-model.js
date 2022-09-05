@@ -26,7 +26,7 @@ export default class IFCModel extends Component{
         this.ifcapi.SetWasmPath("../../static/");
         this.materials = {};
 
-        fetch('../../assets/ifc-models/RME_basic_sample_project.ifc')
+        fetch('../../assets/ifc-models/basic_project.ifc')
             .then(response => response.text())
             .then(async data => {
                const uint8array = new TextEncoder().encode(data);

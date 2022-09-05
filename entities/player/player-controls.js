@@ -18,7 +18,7 @@ export default class PlayerControls  extends Component{
 
         this.timeZeroToMax = 0.08;
 
-        this.maxSpeed = 5.0;
+        this.maxSpeed = 3.0;
         this.speed = new Vector3();
         this.acceleration = this.maxSpeed / this.timeZeroToMax;
         this.decceleration = -3.0;
@@ -163,12 +163,12 @@ export default class PlayerControls  extends Component{
         this.physicsBody.setLinearVelocity(velocity);
         this.physicsBody.setAngularVelocity(this.zeroVec);
 
-        const ms = this.physicsBody.getMotionState();
+        const motionState = this.physicsBody.getMotionState();
 
-        if(ms){
-            ms.getWorldTransform(this.transform);
+        if(motionState){
+            motionState.getWorldTransform(this.transform);
             const p = this.transform.getOrigin();
-            this.camera.position.set(p.x(), p.y() + this.yOffset, p.z());
+            this.camera.position.set(p.x(), p.y(), p.z());
             this.parent.SetPosition(this.camera.position);
         }
  

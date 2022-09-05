@@ -35,7 +35,7 @@ function createConvexHullShape(object) {
 function createConvexHullShape2(object) {
   let coords = object.geometry.attributes.position.array;
   let tempVec = new MyAmmo.btVector3(0, 0, 0);
-  let shape = new MyAmmo.btConvexHullShape();
+  let shape = new MyAmmo.btBvhTriangleMeshShape();
   for (let i = 0, il = coords.length; i < il; i+= 3) {
     tempVec.setValue(coords[i], coords[i + 1], coords[i + 2]);
     let lastOne = (i >= (il - 3));
